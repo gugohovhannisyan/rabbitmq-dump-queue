@@ -15,9 +15,8 @@ var (
 	uri         = flag.String("uri", "amqp://guest:guest@localhost:5672/", "AMQP URI")
 	insecureTls = flag.Bool("insecure-tls", false, "Insecure TLS mode: don't check certificates")
 	queue       = flag.String("queue", "", "AMQP queue name")
-	ack         = flag.Bool("ack", false, "Acknowledge messages")
+	ack         = flag.Bool("ack", true, "Acknowledge messages")
 	maxMessages = flag.Uint("max-messages", 1000, "Maximum number of messages to dump")
-	//messages    = make([][]byte, uint(*maxMessages)) // [flag.Uint("max-messages", 1000, "Maximum number of messages to dump")] []byte
 )
 
 func main() {
@@ -78,7 +77,7 @@ func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) (
 	}
 
 	for messagesReceived := uint(0); messagesReceived < maxMessages; messagesReceived++ {
-		msg, ok, err := channel.Get(queueName,
+			msg, ok, err := channel.Get(queueName,
 			*ack, // autoAck
 		)
 		if err != nil {
