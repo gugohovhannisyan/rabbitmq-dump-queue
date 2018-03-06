@@ -27,6 +27,11 @@ func main() {
 		os.Exit(2)
 	}
 
+	if *queue == "" {
+		fmt.Fprintf(os.Stderr, "%s\n", "Must supply queue name")
+		os.Exit(1)
+	}
+
 	messages, err := GetMessagesFromQueue(*uri, *queue, *maxMessages)
 
 	if err != nil {
@@ -56,10 +61,6 @@ func dial(amqpURI string) (*amqp.Connection, error) {
 
 func GetMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([]string, error) {
 	var messages = make([]string, maxMessages)
-
-	if queueName == "" {
-		return messages, fmt.Errorf("Must supply queue name")
-	}
 
 	conn, err := dial(amqpURI)
 	if err != nil {
