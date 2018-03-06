@@ -56,8 +56,8 @@ func dial(amqpURI string) (*amqp.Connection, error) {
 	return conn, err
 }
 
-func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([][]byte, error) {
-	var messages = make([][]byte, maxMessages)
+func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([]string, error) {
+	var messages = make([]string, maxMessages)
 
 	if queueName == "" {
 		return messages, fmt.Errorf("Must supply queue name")
@@ -89,7 +89,7 @@ func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) (
 			break
 		}
 
-		messages[messagesReceived] = msg.Body
+		messages[messagesReceived] = string(msg.Body)
 
 		if err != nil {
 			return messages, fmt.Errorf("Save message: %s", err)
