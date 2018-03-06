@@ -42,7 +42,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Fprintf(os.Stderr, "%s\n", messagesJson)
+	fmt.Fprintf(os.Stdout, "%s\n", messagesJson)
 }
 
 func dial(amqpURI string) (*amqp.Connection, error) {
