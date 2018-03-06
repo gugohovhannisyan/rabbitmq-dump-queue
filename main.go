@@ -27,11 +27,10 @@ func main() {
 		os.Exit(2)
 	}
 
-	messages, err := DumpMessagesFromQueue(*uri, *queue, *maxMessages)
+	messages, err := GetMessagesFromQueue(*uri, *queue, *maxMessages)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
 	}
 
 	messagesJson, err := json.Marshal(messages)
@@ -55,7 +54,7 @@ func dial(amqpURI string) (*amqp.Connection, error) {
 	return conn, err
 }
 
-func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([]string, error) {
+func GetMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([]string, error) {
 	var messages = make([]string, maxMessages)
 
 	if queueName == "" {
