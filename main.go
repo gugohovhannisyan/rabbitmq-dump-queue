@@ -17,7 +17,7 @@ var (
 	queue       = flag.String("queue", "", "AMQP queue name")
 	ack         = flag.Bool("ack", false, "Acknowledge messages")
 	maxMessages = flag.Uint("max-messages", 1000, "Maximum number of messages to dump")
-	messages    = make([][]byte, uint(*maxMessages)) // [flag.Uint("max-messages", 1000, "Maximum number of messages to dump")] []byte
+	messages    = make([][]byte, uint(*flag.Uint("max-messages", 1000, "Maximum number of messages to dump"))) // [flag.Uint("max-messages", 1000, "Maximum number of messages to dump")] []byte
 )
 
 func main() {
