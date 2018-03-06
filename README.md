@@ -15,7 +15,7 @@ If you have [Go](https://golang.org/doc/install) installed, you can install
 rabbitmq-dump-queue from source by running:
 
 ```
-go get github.com/dubek/rabbitmq-dump-queue
+go get https://github.com/gugohovhannisyan/rabbitmq-dump-queue
 ```
 
 The `rabbitmq-dump-queue` executable will be created in the `$GOPATH/bin`
