@@ -17,7 +17,7 @@ var (
 	queue       = flag.String("queue", "", "AMQP queue name")
 	ack         = flag.Bool("ack", false, "Acknowledge messages")
 	maxMessages = flag.Uint("max-messages", 1000, "Maximum number of messages to dump")
-	messages    = make([][]byte, uint(*flag.Uint("max-messages", 1000, "Maximum number of messages to dump"))) // [flag.Uint("max-messages", 1000, "Maximum number of messages to dump")] []byte
+	//messages    = make([][]byte, uint(*maxMessages)) // [flag.Uint("max-messages", 1000, "Maximum number of messages to dump")] []byte
 )
 
 func main() {
@@ -27,7 +27,9 @@ func main() {
 		flag.Usage()
 		os.Exit(2)
 	}
-	err := DumpMessagesFromQueue(*uri, *queue, *maxMessages/*, *outputDir*/)
+
+	messages, err := DumpMessagesFromQueue(*uri, *queue, *maxMessages)
+
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
@@ -54,14 +56,16 @@ func dial(amqpURI string) (*amqp.Connection, error) {
 	return conn, err
 }
 
-func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) error {
+func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([][]byte, error) {
+	var messages = make([][]byte, maxMessages)
+
 	if queueName == "" {
-		return fmt.Errorf("Must supply queue name")
+		return messages, fmt.Errorf("Must supply queue name")
 	}
 
 	conn, err := dial(amqpURI)
 	if err != nil {
-		return fmt.Errorf("Dial: %s", err)
+		return messages, fmt.Errorf("Dial: %s", err)
 	}
 
 	defer func() {
@@ -70,7 +74,7 @@ func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) e
 
 	channel, err := conn.Channel()
 	if err != nil {
-		return fmt.Errorf("Channel: %s", err)
+		return messages, fmt.Errorf("Channel: %s", err)
 	}
 
 	for messagesReceived := uint(0); messagesReceived < maxMessages; messagesReceived++ {
@@ -78,7 +82,7 @@ func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) e
 			*ack, // autoAck
 		)
 		if err != nil {
-			return fmt.Errorf("Queue get: %s", err)
+			return messages, fmt.Errorf("Queue get: %s", err)
 		}
 
 		if !ok {
@@ -88,9 +92,9 @@ func DumpMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) e
 		messages[messagesReceived] = msg.Body
 
 		if err != nil {
-			return fmt.Errorf("Save message: %s", err)
+			return messages, fmt.Errorf("Save message: %s", err)
 		}
 	}
 
-	return nil
+	return messages, nil
 }
