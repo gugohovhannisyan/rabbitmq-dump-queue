@@ -89,10 +89,6 @@ func GetMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([
 		}
 
 		messages[messagesReceived] = string(msg.Body)
-
-		if err != nil {
-			return messages, fmt.Errorf("Save message: %s", err)
-		}
 	}
 
 	return messages, nil
