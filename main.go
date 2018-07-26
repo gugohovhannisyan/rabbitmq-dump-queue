@@ -67,9 +67,7 @@ func GetMessagesFromQueue(amqpURI string, queueName string, maxMessages uint) ([
 		return messages, fmt.Errorf("Dial: %s", err)
 	}
 
-	defer func() {
-		conn.Close()
-	}()
+	defer conn.Close()
 
 	channel, err := conn.Channel()
 	if err != nil {
